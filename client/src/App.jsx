@@ -22,7 +22,7 @@ import { useAppContext } from './context/AppContext.jsx'
 import AddProduct from './pages/seller/AddProduct.jsx'
 import ProductList from './pages/seller/ProductList.jsx'
 import Orders from './pages/seller/Orders.jsx'
-import Loading from './components/loading.jsx'
+import Loading from './components/Loading.jsx'
 
 
 const App = () => {
