@@ -1,4 +1,5 @@
 import React from "react"
+import toast from 'react-hot-toast'
 
 const NewsLetter = () => {
     return (
@@ -23,6 +24,7 @@ const NewsLetter = () => {
                     <button 
                         type="submit" 
                         className="px-8 py-3 text-white bg-primary hover:bg-primary-dull font-semibold transition-all duration-75 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                        onClick={() => toast.success("Thanks for suscribing. Please check email regularly  to get the latest offers, new arrivals, and exclusive discounts")}
                     >
                         Subscribe
                     </button>
