@@ -1,0 +1,13 @@
+installed packages : 
+
+bcrypt = used in password hashing
+cloudinary = anaging images and videos 
+cookie-parser = cookie support in express
+cors = security feature  to control how resources can be requested from another domain 
+dotenv = loads environment variables from a .env 
+express = node backend framework
+jsonwebtoken = security password authtication
+mongoose = database
+multer = uploading files in Node.js and Express applications.
+stripe = payment
+nodemon = for running server 
