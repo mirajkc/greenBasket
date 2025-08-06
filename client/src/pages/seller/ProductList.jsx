@@ -39,7 +39,7 @@ const ProductList = () => {
                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 tracking-wider">Product</th>
                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 tracking-wider">Category</th>
                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 tracking-wider hidden md:table-cell">Selling Price</th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 tracking-wider">In Stock</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 tracking-wider">Stock Status</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
@@ -72,16 +72,21 @@ const ProductList = () => {
                         {currency}{product.offerPrice}
                       </td>
                       <td className="px-4 py-3">
-                        <label className="relative inline-flex items-center cursor-pointer text-gray-900 gap-3">
-                          <input 
-                            type="checkbox" 
-                            onClick={() => toggleStock(product._id, !product.inStock)} 
-                            checked={product.inStock} 
-                            className="sr-only peer"  
-                          />
-                          <div className="w-12 h-7 bg-slate-300 rounded-full peer peer-checked:bg-primary transition-colors duration-200"></div>
-                          <span className="dot absolute left-1 top-1 w-5 h-5 bg-white rounded-full transition-transform duration-200 ease-in-out peer-checked:translate-x-5"></span>
-                        </label>
+                        {product.inStock ? (
+                          <button
+                            onClick={() => toggleStock(product._id, false)}
+                            className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200 font-medium"
+                          >
+                            Remove from Stock
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => toggleStock(product._id, true)}
+                            className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors duration-200 font-medium"
+                          >
+                            Update Stock
+                          </button>
+                        )}
                       </td>
                     </tr>
                   ))}
