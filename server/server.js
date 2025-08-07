@@ -6,7 +6,7 @@ import connectDB from './configs/db.js';
 import 'dotenv/config';
 import userRouter from './routes/userRoute.js';
 import sellerRouter from './routes/sellerRoute.js';
-import connectCLoudinary from './configs/cloudinary.js'
+import connectCLoudinary from './configs/cloudinary.js';
 import productRouter from './routes/productRoute.js';
 import cartRouter from './routes/cartRoute.js';
 import addressRouter from './routes/addressRoute.js';
@@ -16,46 +16,60 @@ import { stripeWebHooks } from './controllers/orderController.js';
 const app = express();
 const port = process.env.PORT || 4000;
 
-// Connect to the database
+// Connect to the database and Cloudinary
 await connectDB();
 await connectCLoudinary();
 
-// Allow multiple origins
-const allowedOrigins = ['http://localhost:5173','https://green-basket-egji.vercel.app'];
-app.post('/stripe',express.raw({type : 'application/json'}), stripeWebHooks)
+// ✅ Define allowed origins
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://green-basket-egji.vercel.app',
+  'https://green-basket-egji-89pc1jn93-miraj-kcs-projects.vercel.app'
+];
 
-// Middlewares
+// ✅ Set up CORS middleware before everything else
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true 
+};
+
+app.use(cors(corsOptions)); 
+
+
+app.post('/stripe', express.raw({ type: 'application/json' }), stripeWebHooks);
+
+
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({
-  origin: allowedOrigins,
-  credentials: true
-}));
 
 // Routes
 app.get('/', (req, res) => {
   res.send("Hello World");
 });
 
-
-//user Routes
+// user routes
 app.use('/api/user', userRouter);
 
-//seller Routes
-app.use('/api/seller', sellerRouter)
+// seller routes
+app.use('/api/seller', sellerRouter);
 
-//product router
-app.use('/api/product', productRouter)
+// product routes
+app.use('/api/product', productRouter);
 
-//update cart
-app.use('/api/cart', cartRouter)
+// cart routes
+app.use('/api/cart', cartRouter);
 
-//adress
-app.use('/api/address', addressRouter)
+// address routes
+app.use('/api/address', addressRouter);
 
-//order 
-app.use('/api/order', orderRouter)
-
+// order routes
+app.use('/api/order', orderRouter);
 
 // Start the server
 app.listen(port, () => {
