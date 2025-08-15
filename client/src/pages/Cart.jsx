@@ -125,7 +125,7 @@ const placeOrder = async () => {
                 </div>
 
                 {cartArray.map((product, index) => (
-                    <div key={index} className="grid grid-cols-[2fr_1fr_1fr] text-gray-500 items-center text-sm md:text-base font-medium pt-3 bg-white border border-gray-200 rounded-lg p-4 mb-4 shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-300 hover:-translate-y-1 animate-in slide-in-from-left duration-500" style={{animationDelay: `${index * 100}ms`}}>
+                    <div key={index} className="grid grid-cols-[2fr_1fr_1fr] text-gray-500 items-center text-sm md:text-base font-medium pt-3 bg-white border border-gray-200 rounded-lg p-4 mb-4 shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-300 hover:-translate-y-1 animate-in slide-in-from-left" style={{animationDelay: `${index * 100}ms`}}>
                         <div className="flex items-center md:gap-6 gap-3">
                             <div onClick={() => { navigate(`/products/${product.category.toLowerCase()}/${product._id}`); window.scrollTo(0, 0) }} className="cursor-pointer w-24 h-24 flex items-center justify-center border border-gray-300 rounded-lg overflow-hidden hover:border-primary hover:scale-105 transition-all duration-300 hover:shadow-lg group">
                                 <img className="max-w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" src={product.image[0]} alt={product.name} />
@@ -153,7 +153,7 @@ const placeOrder = async () => {
                 </button>
             </div>
 
-            <div className="max-w-[360px] w-full bg-white p-6 max-md:mt-16 border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 sticky top-6 animate-in slide-in-from-right duration-500">
+            <div className="max-w-[360px] w-full bg-white p-6 max-md:mt-16 border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 sticky top-6 animate-in slide-in-from-right ">
                 <h2 className="text-xl md:text-xl font-medium text-gray-800 relative pb-2">
                     Order Summary
                     <div className="absolute bottom-0 left-0 w-12 h-0.5 bg-primary rounded-full animate-in slide-in-from-left duration-500 delay-300"></div>
