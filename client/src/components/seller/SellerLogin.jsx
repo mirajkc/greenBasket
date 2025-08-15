@@ -10,7 +10,7 @@ const SellerLogin = () => {
 
   useEffect(()=>{
     if(isSeller){
-      navigate('/seller')
+      window.location.pathname=('/seller')
     }
   },[isSeller])
 

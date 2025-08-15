@@ -20,7 +20,7 @@ const Login = () => {
     });
 
     if (data.success) {  
-      navigate('/home');
+      window.location.pathname='/home'
       setUser(data.user);
       setShowUserLogin(false);
     } else {
