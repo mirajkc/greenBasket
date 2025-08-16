@@ -174,11 +174,30 @@ export const AppContextProvider = ({ children }) => {
     return Math.floor(totalAmount * 100) / 100;
   };
 
+
+  
+const showAppleNotice = () => {
+  const ua = navigator.userAgent || navigator.vendor || window.opera;
+  const isAppleDevice = /iPhone|iPad|iPod|Macintosh|MacIntel|MacPPC|Mac68K/.test(ua);
+
+  if (isAppleDevice) {
+    toast.error(
+      "⚠️ Apple device detected: Please disable 'Prevent Cross-Site Tracking' in Settings for this website to work properly.",
+      { duration: 5000 }
+    );
+  }
+};
+
+
+
   useEffect(() => {
+    showAppleNotice()
     fetchUser();
     fetchProducts();
     fetchSeller();
+
   }, []);
+  
 
   const value = {
     navigate,
