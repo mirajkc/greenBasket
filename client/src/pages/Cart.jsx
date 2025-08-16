@@ -99,7 +99,6 @@ const placeOrder = async () => {
         toast.error(data.message);
       }
     }
-
     else {
       toast.error("Invalid payment method selected");
     }

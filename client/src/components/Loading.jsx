@@ -14,12 +14,12 @@ const Loading = () => {
         navigate(`/${nextUrl}`)
       },5000)
     } else {
-      // Navigate to my-orders after 5 seconds if no nextUrl is provided
+      
       setTimeout(()=>{
         navigate('/my-orders')
       },5000)
     }
-  },[])
+  },[nextUrl])
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-white z-50">

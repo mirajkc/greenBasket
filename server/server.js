@@ -11,7 +11,8 @@ import productRouter from './routes/productRoute.js';
 import cartRouter from './routes/cartRoute.js';
 import addressRouter from './routes/addressRoute.js';
 import orderRouter from './routes/orderRoute.js';
-import { stripeWebHooks } from './controllers/orderController.js';
+import { stripeWebhooks } from './controllers/orderController.js';
+
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -20,14 +21,15 @@ const port = process.env.PORT || 4000;
 await connectDB();
 await connectCLoudinary();
 
-// ✅ Define allowed origins
+
 const allowedOrigins = [
   'http://localhost:5173',
   'https://green-basket-egji.vercel.app',
   'https://green-basket-egji-89pc1jn93-miraj-kcs-projects.vercel.app'
 ];
 
-// ✅ Set up CORS middleware before everything else
+app.post('/stripe' , express.raw({ type : 'application/json' }), stripeWebhooks)
+
 const corsOptions = {
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
@@ -40,11 +42,6 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions)); 
-
-
-app.post('/stripe', express.raw({ type: 'application/json' }), stripeWebHooks);
-
-
 app.use(express.json());
 app.use(cookieParser());
 

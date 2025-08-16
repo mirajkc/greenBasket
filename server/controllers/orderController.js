@@ -1,8 +1,9 @@
 import Order from "../models/order.js";
 import Product from "../models/product.js";
 import User from "../models/User.js";
+import Stripe from "stripe";
 
-// ✅ Place Order - COD
+
 export const placeOrderCOD = async (req, res) => {
   try {
     const { userId, items, address } = req.body;
@@ -52,8 +53,7 @@ export const placeOrderCOD = async (req, res) => {
   }
 };
 
-// ✅ Place Order - Stripe
-import Stripe from 'stripe';
+
 
 export const placeOrderStripe = async (req, res) => {
   try {
@@ -113,7 +113,6 @@ export const placeOrderStripe = async (req, res) => {
     }));
 
     const session = await stripeInstance.checkout.sessions.create({
-      payment_method_types: ['card'],
       mode: 'payment',
       line_items: lineItems,
       success_url: `${origin}/loader?next=my-orders`,
@@ -138,9 +137,9 @@ export const placeOrderStripe = async (req, res) => {
   }
 };
 
-  // Stripe Gateway Protocol
 
-export const stripeWebHooks = async (req, res) => {
+  // Stripe Gateway Protocol
+export const stripeWebhooks = async (req, res) => {
   const stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY);
 
   const sig = req.headers["stripe-signature"];
@@ -160,28 +159,16 @@ export const stripeWebHooks = async (req, res) => {
   switch (event.type) {
     case "payment_intent.succeeded": {
       const paymentIntent = event.data.object;
-      const paymentIntentId = paymentIntent.id; // ❗ Fixed: 'id', not 'Id'
+      const paymentIntentId = paymentIntent.id; 
 
       // Get the session associated with the payment intent
       const sessions = await stripeInstance.checkout.sessions.list({
         payment_intent: paymentIntentId,
-        limit: 1 // ✅ safer to limit to 1 result
       });
 
-      const session = sessions.data[0];
-      if (!session || !session.metadata) {
-        console.error("Session or metadata not found.");
-        break;
-      }
-
-      const { orderId, userId } = session.metadata;
-
-      // Mark order as paid
+      const { orderId , userId } = sessions.data[0].metadata;
       await Order.findByIdAndUpdate(orderId, { isPaid: true });
-
-      // Clear user's cart
       await User.findByIdAndUpdate(userId, { cartItems: {} });
-
       break;
     }
 
@@ -189,34 +176,22 @@ export const stripeWebHooks = async (req, res) => {
       const paymentIntent = event.data.object;
       const paymentIntentId = paymentIntent.id;
 
-      const sessions = await stripeInstance.checkout.sessions.list({
+      const session = await stripeInstance.checkout.sessions.list({
         payment_intent: paymentIntentId,
-        limit: 1
       });
-
-      const session = sessions.data[0];
-      if (!session || !session.metadata) {
-        console.error("Session or metadata not found.");
-        break;
-      }
-
-      const { orderId } = session.metadata;
-
-      // Delete the failed order
+      const { orderId } = session.data[0].metadata;
       await Order.findByIdAndDelete(orderId);
-
       break;
     }
 
     default:
-      console.warn(`Unhandled event type: ${event.type}`);
+      console.error(`Unhandled event type: ${event.type}`);
   }
-
   res.json({ received: true });
 };
 
 
-// ✅ Get Orders by userId
+
 export const getUserOrders = async (req, res) => {
   try {
     const userId = req.user.id;
