@@ -1,6 +1,7 @@
-import User from "../models/User.js";
+import User from '../models/User.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import email from '../servies/email.service.js';
 
 // User Registration: POST /api/user/register
 export const register = async (req, res) => {
@@ -11,7 +12,7 @@ export const register = async (req, res) => {
     if (!name || !email || !password) {
       return res.status(400).json({
         success: false,
-        message: "Missing details",
+        message: 'Missing details',
       });
     }
 
@@ -20,7 +21,7 @@ export const register = async (req, res) => {
     if (existingUser) {
       return res.status(400).json({
         success: false,
-        message: "User already exists",
+        message: 'User already exists',
       });
     }
 
@@ -32,17 +33,16 @@ export const register = async (req, res) => {
 
     // Generate JWT token
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
+      expiresIn: '7d',
     });
 
     // Set token as an HTTP-only cookie
-    res.cookie("token", token, {
+    res.cookie('token', token, {
       httpOnly: true,
       secure: true,
-      sameSite: "none",
-      maxAge: 7 * 24 * 60 * 60 * 1000, 
+      sameSite: 'none',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
-
 
     return res.status(201).json({
       success: true,
@@ -51,83 +51,85 @@ export const register = async (req, res) => {
         email: user.email,
       },
     });
-
   } catch (error) {
-    console.error("Registration Error:", error.message);
+    console.error('Registration Error:', error.message);
     res.status(500).json({
       success: false,
-      message: "Server Error",
+      message: 'Server Error',
     });
   }
 };
 
 // User login: POST /api/user/login
-export const login = async(req,res) => {
+export const login = async (req, res) => {
   try {
-    const {email,password} = req.body
+    const { email, password } = req.body;
 
     // invalid input
-    if(!email || !password){
-      return res.status(400).json({  // Added status code
-        success : false , 
-        message : "Email and Password Are Required"
-      })
-    };
+    if (!email || !password) {
+      return res.status(400).json({
+        // Added status code
+        success: false,
+        message: 'Email and Password Are Required',
+      });
+    }
 
     //checking for the user
-    const user = await User.findOne({email});
-    if(!user){
-      return res.status(401).json({  // Added status code
-        success : false , 
-        message : "Invalid Email or Password"
-      })
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(401).json({
+        // Added status code
+        success: false,
+        message: 'Invalid Email or Password',
+      });
     }
 
     //comparing pass to the database password
-    const isMatch = await bcrypt.compare(password, user.password)
+    const isMatch = await bcrypt.compare(password, user.password);
 
     //if password dont match
-    if(!isMatch){
-      return res.status(401).json({  // Added status code
-        success : false , 
-        message : "Invalid Email or Password"
-      })
+    if (!isMatch) {
+      return res.status(401).json({
+        // Added status code
+        success: false,
+        message: 'Invalid Email or Password',
+      });
     }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
+      expiresIn: '7d',
     });
 
     // Set token as an HTTP-only cookie
-    res.cookie("token", token, {
+    res.cookie('token', token, {
       httpOnly: true,
       secure: true,
-      sameSite: "none",
-      maxAge: 7 * 24 * 60 * 60 * 1000, 
+      sameSite: 'none',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    return res.status(200).json({  // Changed from 201 to 200
+    return res.status(200).json({
+      // Changed from 201 to 200
       success: true,
       user: {
         name: user.name,
         email: user.email,
       },
     });
-
   } catch (error) {
-    console.error("Login Error:", error.message);  // Changed from "Registration Error"
+    console.error('Login Error:', error.message); // Changed from "Registration Error"
     res.status(500).json({
       success: false,
-      message: "Server Error",
-    })
+      message: 'Server Error',
+    });
   }
-}
+};
 
 //check Auth /api/user/is-auth
 export const isAuth = async (req, res) => {
   try {
     const userId = req.user.id; // ✅ Fixed
-    const user = await User.findById(userId).select("-password");
+    const user = await User.findById(userId).select('-password');
 
     return res.json({
       success: true,
@@ -141,23 +143,55 @@ export const isAuth = async (req, res) => {
   }
 };
 
-
 //logout user api/user/logout
-export const logout = async(req,res) => {
+export const logout = async (req, res) => {
   try {
     res.clearCookie('token', {
-      httpOnly : true,
-      secure : true,
-      sameSite: "none"
-    })
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+    });
     return res.json({
-      success : true,  // Fixed: was "sucess"
-      message : "Logged Out"
-    })
+      success: true, // Fixed: was "sucess"
+      message: 'Logged Out',
+    });
   } catch (error) {
     return res.json({
-      success : false,  // Fixed: was "sucess"
-      message : error.message,
-    })
+      success: false, // Fixed: was "sucess"
+      message: error.message,
+    });
   }
-}
+};
+
+export const sendMail = async (req, res) => {
+  try {
+    const emailaddress = req.body.emailaddress;
+    const emailValidator = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailaddress || !emailValidator.test(emailaddress)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please enter a valid email address',
+      });
+    }
+
+    const subject = 'Thanks for Subscribing to Green Basket';
+    const htmlBody = email.htmlBody(emailaddress);
+    await email.SendMail({
+      to: emailaddress,
+      subject: subject,
+      message: htmlBody,
+    });
+
+    // respond with the prepared subject and html body (replace with actual mail send in your app)
+    return res.status(200).json({
+      success: true,
+      subject,
+      htmlBody,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
