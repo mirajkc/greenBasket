@@ -128,7 +128,7 @@ export const login = async (req, res) => {
 //check Auth /api/user/is-auth
 export const isAuth = async (req, res) => {
   try {
-    const userId = req.user.id; // ✅ Fixed
+    const userId = req.user.id;
     const user = await User.findById(userId).select('-password');
 
     return res.json({
@@ -165,7 +165,7 @@ export const logout = async (req, res) => {
 
 export const sendMail = async (req, res) => {
   try {
-    const emailaddress = req.body.emailaddress;
+    const { emailaddress } = req.body;
     const emailValidator = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailaddress || !emailValidator.test(emailaddress)) {
       return res.status(400).json({

@@ -1,6 +1,5 @@
 import 'dotenv/config';
-
-export const SMTPkey = {
+const SMTPConfigs = {
   provider: process.env.SMTP_PROVIDER,
   host: process.env.SMTP_HOST,
   port: process.env.SMTP_POR,
@@ -8,3 +7,5 @@ export const SMTPkey = {
   from: process.env.SMTP_FROM,
   password: process.env.SMTP_PASSWORD,
 };
+
+export default SMTPConfigs;

@@ -21,6 +21,7 @@ userRouter.get('/is-auth', authUser, isAuth); //here auth user is a middleware t
 //executed before the controller fn called (isAuth)
 //logoout user
 userRouter.get('/logout', authUser, logout);
+
 userRouter.post('/sendmail', sendMail);
 
 export default userRouter;
