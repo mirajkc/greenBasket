@@ -1,17 +1,15 @@
 import nodemailer from 'nodemailer';
-import { SMTPConfigs } from '../../../../../Mern Learning/node-js/src/config/config.js';
-
 class EmailService {
   #transporter;
   constructor() {
     try {
       this.#transporter = nodemailer.createTransport({
-        host: SMTPConfigs.host,
-        port: SMTPConfigs.port,
+        host: process.env.SMTP_HOST,
+        port: process.env.SMTP_PORT,
         secure: false,
         auth: {
-          user: SMTPConfigs.user,
-          pass: SMTPConfigs.password,
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASSWORD,
         },
       });
       console.log(
@@ -25,7 +23,7 @@ class EmailService {
   async SendMail({ to, subject, message }) {
     try {
       return await this.#transporter.sendMail({
-        from: SMTPConfigs.from,
+        from: process.env.SMTP_FROM,
         to: to,
         subject: subject,
         html: message,
