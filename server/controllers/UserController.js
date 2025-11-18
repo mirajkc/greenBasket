@@ -1,8 +1,7 @@
 import User from '../models/User.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import email from '../servies/email.service.js';
-
+import { SendMail } from '../servies/email.service.js';
 // User Registration: POST /api/user/register
 export const register = async (req, res) => {
   try {
@@ -163,10 +162,12 @@ export const logout = async (req, res) => {
   }
 };
 
-export const sendMail = async (req, res) => {
+export const SendNewsLetter = async (req, res) => {
   try {
     const { emailaddress } = req.body;
+
     const emailValidator = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
     if (!emailaddress || !emailValidator.test(emailaddress)) {
       return res.status(400).json({
         success: false,
@@ -174,19 +175,11 @@ export const sendMail = async (req, res) => {
       });
     }
 
-    const subject = 'Thanks for Subscribing to Green Basket';
-    const htmlBody = email.htmlBody(emailaddress);
-    await email.SendMail({
-      to: emailaddress,
-      subject: subject,
-      message: htmlBody,
-    });
+    await SendMail({ emailaddress });
 
-    // respond with the prepared subject and html body (replace with actual mail send in your app)
     return res.status(200).json({
       success: true,
-      subject,
-      htmlBody,
+      message: 'Email sent successfully',
     });
   } catch (error) {
     return res.status(500).json({

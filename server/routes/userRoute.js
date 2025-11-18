@@ -6,7 +6,7 @@ import {
   login,
   logout,
   register,
-  sendMail,
+  SendNewsLetter,
 } from '../controllers/UserController.js';
 import authUser from '../middlewares/authUser.js';
 
@@ -22,6 +22,6 @@ userRouter.get('/is-auth', authUser, isAuth); //here auth user is a middleware t
 //logoout user
 userRouter.get('/logout', authUser, logout);
 
-userRouter.post('/sendmail', sendMail);
+userRouter.post('/sendmail', SendNewsLetter);
 
 export default userRouter;
