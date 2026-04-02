@@ -1,0 +1,27 @@
+
+version: "3.9"
+services:
+  server:
+    build: ./server
+    container_name: server
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./server/.env:/app/.env:ro
+
+  client:
+    build:
+      context: ./client
+      args:
+        VITE_BACKEND_URL: /
+    container_name: client
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - server
+      - client

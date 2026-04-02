@@ -1,6 +1,12 @@
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_KEY);
+const getResendClient = () => {
+  const resendKey = process.env.RESEND_KEY || process.env.RESEND_API_KEY;
+  if (!resendKey) {
+    throw new Error('Missing Resend API key. Set RESEND_KEY (or RESEND_API_KEY) in environment variables.');
+  }
+  return new Resend(resendKey);
+};
 
 const htmlBody = (emailaddress) => {
   return `
@@ -107,10 +113,10 @@ const htmlBody = (emailaddress) => {
     </html>
   `;
 };
-console.log(process.env.RESEND_KEY);
 
 export const SendMail = async ({ emailaddress }) => {
   try {
+    const resend = getResendClient();
     const response = await resend.emails.send({
       from: process.env.SMTP_FROM,
       to: emailaddress,

@@ -1,9 +1,9 @@
 // importing modules
+import 'dotenv/config';
 import cookieParser from 'cookie-parser';
 import express from 'express';
 import cors from 'cors';
 import connectDB from './configs/db.js';
-import 'dotenv/config';
 import userRouter from './routes/userRoute.js';
 import sellerRouter from './routes/sellerRoute.js';
 import connectCLoudinary from './configs/cloudinary.js';
@@ -25,7 +25,8 @@ await connectCLoudinary();
 const allowedOrigins = [
   'http://localhost:5173',
   'https://green-basket-egji.vercel.app',
-  'https://green-basket-egji-89pc1jn93-miraj-kcs-projects.vercel.app'
+  'https://green-basket-egji-89pc1jn93-miraj-kcs-projects.vercel.app',
+  "http://localhost"
 ];
 
 app.post('/stripe' , express.raw({ type : 'application/json' }), stripeWebhooks)
@@ -69,6 +70,6 @@ app.use('/api/address', addressRouter);
 app.use('/api/order', orderRouter);
 
 // Start the server
-app.listen(port, () => {
+app.listen(port,"0.0.0.0" ,  () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
